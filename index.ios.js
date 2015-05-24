@@ -15,10 +15,18 @@ var {
 var StatusCircle = require('./components/StatusCircle');
 
 var CommuterBot = React.createClass({
+  componentDidMount: function() {
+    var that = this;
+
+    setTimeout(function() {
+      that.refs.status.changeColor('red');
+    }, 2000);
+  },
+
   render: function() {
     return (
       <View style={styles.container}>
-        <StatusCircle style={styles.status} />
+        <StatusCircle ref="status" style={styles.status} />
       </View>
     );
   }

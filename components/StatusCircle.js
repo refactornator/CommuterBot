@@ -14,6 +14,8 @@ var {
     Text
 } = ReactArt;
 
+var chroma = require('chroma-js');
+
 /**
  * An animated SVG component.
  */
@@ -22,7 +24,7 @@ var StatusCircle = React.createClass({
    * Initialize state members.
    */
   getInitialState: function() {
-    return {};
+    return {color: this.props.color || '#27e833', duration: this.props.duration || 250};
   },
   /**
    * When the component is mounted into the document - this is similar to a
@@ -32,12 +34,30 @@ var StatusCircle = React.createClass({
    * are automatically bound before being mounted.
    */
   componentDidMount: function() {
-    this._interval = window.setInterval(this.onTick, 20);
   },
   componentWillUnmount: function() {
     window.clearInterval(this._interval);
   },
-  onTick: function() {
+  changeColor: function(newColor) {
+    var currentColor = this.state.color;
+    var start = new Date().getTime();
+    var end = start + this.state.duration;
+    this._interval = window.setInterval(this.onTick.bind(null, start, end, currentColor, newColor), 20);
+  },
+  onTick: function(start, end, currentColor, newColor) {
+    var now = new Date().getTime();
+    var progress;
+    
+    if (now > end) {
+      window.clearInterval(this._interval);
+
+      progress = 1;
+    } else {
+      progress = (now - start) / (end - start);
+    }
+
+    var color = chroma.interpolate(currentColor, newColor, progress, 'lab').hex();
+    this.setState({color: color});
   },
   /**
    * This is the "main" method for any component. The React API allows you to
@@ -48,7 +68,7 @@ var StatusCircle = React.createClass({
       <Surface
         width={200}
         height={200}>
-        <Shape fill="#27e833" d={BG_PATH} />
+        <Shape fill={this.state.color} d={BG_PATH} />
       </Surface>
     );
   }
