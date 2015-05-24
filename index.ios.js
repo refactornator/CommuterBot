@@ -1,6 +1,9 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
+ *
+ * Muni Security Token
+ * 68db6183-bae8-4fbf-9030-80a07e6226db
  */
 'use strict';
 
