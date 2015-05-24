@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function getNextDepartureTime(xml) {
   var minutes = null;

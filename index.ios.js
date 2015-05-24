@@ -6,75 +6,88 @@
 
 var React = require('react-native');
 var {
+  AppStateIOS,
   AppRegistry,
   StyleSheet,
-  Text,
   View,
 } = React;
 
-var xml2js = require('xml2js');
-
-var StatusCircle = require('./components/StatusCircle');
-var ServiceParser = require('./components/ServiceParser');
-
-var AGENCY = 'sf-muni';
-var ROUTE_CODE = '1';
-var STOP_CODE = '3832';
-var REQUEST_URL = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a='+AGENCY+'&r='+ROUTE_CODE+'&s='+STOP_CODE;
+var StatusList = require('./pages/StatusList');
 
 var CommuterBot = React.createClass({
   getInitialState: function() {
-    return {nextDepartureIn: null};
+    return {
+      currentAppState: AppStateIOS.currentState,
+      currentLocation: {
+        latitude: '37.7847900',
+        longitude: '-122.4719830'
+      }
+    };
   },
 
   componentDidMount: function() {
-    var that = this;
+    AppStateIOS.addEventListener('change', this._handleAppStateChange);
+    // var that = this;
 
-    var options = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-    };
+    // var options = {
+    //   enableHighAccuracy: true,
+    //   timeout: 5000,
+    //   maximumAge: 0
+    // };
 
-    function success(pos) {
-      var crd = pos.coords;
+    // function success(pos) {
+    //   var crd = pos.coords;
 
-      console.log('Your current position is:');
-      console.log('Latitude : ' + crd.latitude);
-      console.log('Longitude: ' + crd.longitude);
-      console.log('More or less ' + crd.accuracy + ' meters.');
-    };
+    //   console.log('Your current position is:');
+    //   console.log('Latitude : ' + crd.latitude);
+    //   console.log('Longitude: ' + crd.longitude);
+    //   console.log('More or less ' + crd.accuracy + ' meters.');
+    // };
 
-    function error(err) {
-      console.warn('ERROR(' + err.code + '): ' + err.message);
-    };
+    // function error(err) {
+    //   console.warn('ERROR(' + err.code + '): ' + err.message);
+    // };
 
     // navigator.geolocation.getCurrentPosition(success, error, options);
+  },
 
-    fetch(REQUEST_URL)
-      .then(function(response) {
-        xml2js.parseString(response._bodyInit, function (err, result) {
-          var nextDepartureIn = ServiceParser.getNextDepartureTime(result);
-          that.setState({nextDepartureIn: nextDepartureIn});
-          if (nextDepartureIn <= 5) {
-            that.refs.status.changeColor('#379F55');
-          } else if (nextDepartureIn > 5 && nextDepartureIn <= 10) {
-            that.refs.status.changeColor('#ffb83f');
-          } else if (nextDepartureIn > 10) {
-            that.refs.status.changeColor('#ec5252');
-          }
+  componentWillUnmount: function() {
+    AppStateIOS.removeEventListener('change', this._handleAppStateChange);
+  },
 
-          console.log('next departure in:', nextDepartureIn, 'minutes.');
-        });
-      })
-      .done();
+  _handleAppStateChange: function(currentAppState) {
+    this.setState({ currentAppState, });
+    this.forceUpdate();
   },
 
   render: function() {
+    console.log('rendering');
+    
+    var data = [{
+      id: 1,
+      name: 'The 1 Bus to Work',
+      agency: 'sf-muni',
+      routeCode: '1',
+      stopCode: '3832',
+      location: {
+        latitude: '37.7844499',
+        longitude: '-122.4711'
+      }
+    }, {
+      id: 2,
+      name: 'The 2 Bus Home',
+      agency: 'sf-muni',
+      routeCode: '2',
+      stopCode: '6601',
+      location: {
+        latitude: '37.78906',
+        longitude: '-122.4103199'
+      }
+    }];
+
     return (
       <View style={styles.container}>
-        <StatusCircle ref="status" style={styles.status} />
-        <Text>Next Departure In: {this.state.nextDepartureIn} Minutes</Text>
+        <StatusList data={data} currentLocation={this.state.currentLocation} />
       </View>
     );
   }
@@ -86,10 +99,6 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#ced1d6',
-  },
-  status: {
-    width: 200,
-    height: 200
   }
 });
 
