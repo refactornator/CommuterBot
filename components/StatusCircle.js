@@ -24,7 +24,7 @@ var StatusCircle = React.createClass({
    * Initialize state members.
    */
   getInitialState: function() {
-    return {color: this.props.color || '#27e833', duration: this.props.duration || 250};
+    return {color: this.props.color || '#379F55', duration: this.props.duration || 250};
   },
   /**
    * When the component is mounted into the document - this is similar to a
