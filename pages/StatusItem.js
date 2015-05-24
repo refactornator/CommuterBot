@@ -38,11 +38,11 @@ var StatusItem = React.createClass({
           console.log('next departure in:', minutes, 'minutes.');
 
           if (minutes <= 5) {
-            this.refs.status.changeColor('#379F55');
+            that.refs.status.changeColor('#379F55');
           } else if (minutes > 5 && minutes <= 10) {
-            this.refs.status.changeColor('#ffb83f');
+            that.refs.status.changeColor('#ffb83f');
           } else if (minutes > 10) {
-            this.refs.status.changeColor('#ec5252');
+            that.refs.status.changeColor('#ec5252');
           }
         });
       });
