@@ -42,9 +42,9 @@ var StatusCircle = React.createClass({
     var currentColor = this.state.color;
     var start = new Date().getTime();
     var end = start + this.state.duration;
-    this._interval = window.setInterval(this.onTick.bind(null, start, end, currentColor, newColor), 20);
+    this._interval = window.setInterval(this._onTick.bind(null, start, end, currentColor, newColor), 20);
   },
-  onTick: function(start, end, currentColor, newColor) {
+  _onTick: function(start, end, currentColor, newColor) {
     var now = new Date().getTime();
     var progress;
     
