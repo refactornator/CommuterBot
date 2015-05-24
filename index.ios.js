@@ -17,12 +17,10 @@ var xml2js = require('xml2js');
 var StatusCircle = require('./components/StatusCircle');
 var ServiceParser = require('./components/ServiceParser');
 
-var API_TOKEN = '68db6183-bae8-4fbf-9030-80a07e6226db';
-var AGENCY = 'SF-MUNI';
+var AGENCY = 'sf-muni';
 var ROUTE_CODE = '1';
-var ROUTE_DIRECTION_CODE = 'Inbound';
-var STOP_CODE = '13832';
-var REQUEST_URL = 'http://services.my511.org/Transit2.0/GetNextDeparturesByStopCode.aspx?token=68db6183-bae8-4fbf-9030-80a07e6226db&stopCode=13832';
+var STOP_CODE = '3832';
+var REQUEST_URL = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictions&a='+AGENCY+'&r='+ROUTE_CODE+'&s='+STOP_CODE;
 
 var CommuterBot = React.createClass({
   getInitialState: function() {
@@ -56,7 +54,7 @@ var CommuterBot = React.createClass({
     fetch(REQUEST_URL)
       .then(function(response) {
         xml2js.parseString(response._bodyInit, function (err, result) {
-          var nextDepartureIn = ServiceParser.getNextDepartureTime(result, AGENCY, ROUTE_CODE, ROUTE_DIRECTION_CODE, STOP_CODE);
+          var nextDepartureIn = ServiceParser.getNextDepartureTime(result);
           that.setState({nextDepartureIn: nextDepartureIn});
           if (nextDepartureIn <= 5) {
             that.refs.status.changeColor('#379F55');

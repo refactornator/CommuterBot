@@ -1,37 +1,20 @@
 "use strict";
 
-function getNextDepartureTime(xml, agencyName, routeCode, routeDirectionCode, stopCode) {
-  var Agency = xml.RTT.AgencyList[0].Agency.filter(function(AgencyItem) {
-    if (AgencyItem.$.Name === agencyName) {
-      return true;
+function getNextDepartureTime(xml) {
+  var minutes = null;
+  if (xml.hasOwnProperty('body')) {
+    if (xml.body.hasOwnProperty('predictions') && xml.body.predictions.length > 0) {
+      if (xml.body.predictions[0].hasOwnProperty('direction') && xml.body.predictions[0].direction.length > 0) {
+        if (xml.body.predictions[0].direction[0].hasOwnProperty('prediction') && xml.body.predictions[0].direction[0].prediction.length > 0) {
+          if (xml.body.predictions[0].direction[0].prediction[0].$.hasOwnProperty('minutes')) {
+            minutes = parseInt(xml.body.predictions[0].direction[0].prediction[0].$.minutes, 10);
+          }
+        }
+      }
     }
-  })[0];
-
-  var Route = Agency.RouteList[0].Route.filter(function(RouteItem) {
-    if (RouteItem.$.Code === routeCode) {
-      return true;
-    }
-  })[0];
-
-  var RouteDirection = Route.RouteDirectionList[0].RouteDirection.filter(function(RouteDirectionItem) {
-    if (RouteDirectionItem.$.Code === routeDirectionCode) {
-      return true;
-    }
-  })[0];
-
-  var Stop = RouteDirection.StopList[0].Stop.filter(function(StopItem) {
-    if (StopItem.$.StopCode === stopCode) {
-      return true;
-    }
-  })[0];
-
-  if (Stop.DepartureTimeList[0].hasOwnProperty('DepartureTime')) {
-    console.log('yay, it worked');
-    return Stop.DepartureTimeList[0].DepartureTime[0];
-  } else {
-    console.log('slow down there, Turbo.');
-    return null;
   }
+  
+  return minutes;
 }
 
 exports.getNextDepartureTime = getNextDepartureTime;
