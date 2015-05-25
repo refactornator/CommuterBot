@@ -12,6 +12,7 @@
     "haversine-distance": "^1.0.1",
     "pluralize": "^1.1.2",
     "react-native": "^0.4.4",
+    "react-native-mapbox-gl": "^0.1.2",
     "xml2js": "^0.4.8"
   }
 }
