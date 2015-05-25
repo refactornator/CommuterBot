@@ -63,7 +63,9 @@ var CommuterBot = React.createClass({
   },
 
   _handleAppStateChange: function(currentAppState) {
-    this.setState({ currentAppState, });
+    if(currentAppState === 'active') {
+      this._refreshLocation();
+    }
   },
 
   _refreshLocation: function() {

@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var {
+  AppStateIOS,
   AppRegistry,
   StyleSheet,
   Text,
@@ -27,7 +28,18 @@ var StatusItem = React.createClass({
   },
 
   componentDidMount: function() {
+    AppStateIOS.addEventListener('change', this._handleAppStateChange);
     this.refreshStatus();
+  },
+
+  componentWillUnmount: function() {
+    AppStateIOS.removeEventListener('change', this._handleAppStateChange);
+  },
+
+  _handleAppStateChange: function(currentAppState) {
+    if(currentAppState === 'active') {
+      this.refreshStatus();
+    }
   },
 
   refreshStatus: function() {
