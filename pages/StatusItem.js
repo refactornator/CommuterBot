@@ -8,6 +8,7 @@ var {
   Text,
   View,
 } = React;
+var TimerMixin = require('react-timer-mixin');
 
 var xml2js = require('xml2js');
 var pluralize = require('pluralize');
@@ -21,6 +22,8 @@ var StatusService = require('../components/StatusService');
 var ServiceParser = require('../components/ServiceParser');
 
 var StatusItem = React.createClass({
+  mixins: [TimerMixin],
+
   getInitialState: function() {
     return {
       nextDepartureIn: null
@@ -29,20 +32,35 @@ var StatusItem = React.createClass({
 
   componentDidMount: function() {
     AppStateIOS.addEventListener('change', this._handleAppStateChange);
-    this.refreshStatus();
+    this._refreshStatus();
+    this._startRefreshInterval();
   },
 
   componentWillUnmount: function() {
     AppStateIOS.removeEventListener('change', this._handleAppStateChange);
+    this._stopRefreshInterval();
+  },
+
+  _startRefreshInterval: function() {
+    this.interval = this.setInterval(function() {
+      this._refreshStatus();
+    }.bind(this), 30000);
+  },
+
+  _stopRefreshInterval: function() {
+    this.clearInterval(this.interval);
   },
 
   _handleAppStateChange: function(currentAppState) {
     if(currentAppState === 'active') {
-      this.refreshStatus();
+      this._refreshStatus();
+      this._startRefreshInterval();
+    } else {
+      this._stopRefreshInterval();
     }
   },
 
-  refreshStatus: function() {
+  _refreshStatus: function() {
     var that = this;
 
     StatusService.queryForStatus(this.props.agency, this.props.routeCode, this.props.stopCode)

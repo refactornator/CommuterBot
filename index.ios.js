@@ -16,6 +16,7 @@ var {
   StyleSheet,
   View,
 } = React;
+var TimerMixin = require('react-timer-mixin');
 var Dimensions = require('Dimensions');
 
 var width = Dimensions.get('window').width;
@@ -27,9 +28,10 @@ var LATITUDE_KEY = '@UserLocation:latitude';
 var LONGITUDE_KEY = '@UserLocation:longitude';
 
 var CommuterBot = React.createClass({
+  mixins: [TimerMixin],
+
   getInitialState: function() {
     return {
-      currentAppState: AppStateIOS.currentState,
       currentLocation: {
         latitude: '',
         longitude: ''
@@ -52,19 +54,35 @@ var CommuterBot = React.createClass({
         } else {
           console.log('Initialized with no selection on disk.');
         }
-        this._refreshLocation();
       })
       .catch((error) => console.log('AsyncStorage error: ' + error.message))
       .done();
+
+    this._refreshLocation();
+    this._startRefreshInterval();
   },
 
   componentWillUnmount: function() {
     AppStateIOS.removeEventListener('change', this._handleAppStateChange);
+    this._stopRefreshInterval();
+  },
+
+  _startRefreshInterval: function() {
+    this.interval = this.setInterval(function() {
+      this._refreshLocation();
+    }, 20000);
+  },
+
+  _stopRefreshInterval: function() {
+    this.clearInterval(this.interval);
   },
 
   _handleAppStateChange: function(currentAppState) {
     if(currentAppState === 'active') {
       this._refreshLocation();
+      this._startRefreshInterval();
+    } else {
+      this._stopRefreshInterval();
     }
   },
 
