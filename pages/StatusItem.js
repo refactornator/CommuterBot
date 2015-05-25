@@ -97,7 +97,7 @@ var StatusItem = React.createClass({
       <View style={styles.wrapper}>
         <Text style={[styles.content, styles.header]}>{this.props.title}</Text>
         <StatusCircle ref="status" style={[styles.content, styles.indicator]} />
-        <Text style={[styles.content, styles.details]}>You{"'"}ve got <Text style={{fontWeight: 'bold'}}>{timeLeft} {pluralize('minute', timeLeft)}</Text> before the <Text style={{fontWeight: 'bold'}}>{this.props.routeCode}-{this.props.directionTitle}</Text> leaves.</Text>
+        <Text style={[styles.content, styles.details]}>You{"'"}ve got <Text style={{fontWeight: 'bold'}}>{timeLeft} {pluralize('minute', timeLeft)}</Text> before the <Text style={{fontWeight: 'bold'}}>{this.props.routeCode}-{this.props.directionTitle}</Text> arrives.</Text>
       </View>
     );
   }
