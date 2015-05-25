@@ -39,7 +39,6 @@ var StatusList = React.createClass({
       <ScrollView
         horizontal={true}
         pagingEnabled={true}
-        contentInset={{top: 40}}
         style={styles.scrollView}>
         {statusNodes}
       </ScrollView>
@@ -49,8 +48,8 @@ var StatusList = React.createClass({
 
 var styles = StyleSheet.create({
   scrollView: {
-    backgroundColor: '#6A85B1',
-    width: 380
+    flex: 1,
+    backgroundColor: '#6A85B1'
   }
 });
 

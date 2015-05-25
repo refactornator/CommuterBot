@@ -9,6 +9,10 @@ var {
 } = React;
 
 var xml2js = require('xml2js');
+var Dimensions = require('Dimensions');
+
+var width = Dimensions.get('window').width;
+var height = Dimensions.get('window').height;
 
 var StatusCircle = require('../components/StatusCircle');
 var StatusService = require('../components/StatusService');
@@ -23,7 +27,6 @@ var StatusItem = React.createClass({
 
   componentDidMount: function() {
     this.refreshStatus();
-    console.log(this.props.currentLocation);
   },
 
   refreshStatus: function() {
@@ -61,7 +64,7 @@ var StatusItem = React.createClass({
       <View style={styles.item}>
         <Text style={{marginTop: 10, marginBottom: 30}}>{this.props.title}</Text>
         <StatusCircle ref="status" style={styles.indicator} />
-        <Text style={{width: 200, textAlign: 'center', marginTop: 50}}>You have {this.state.nextDepartureIn - this.props.duration} minutes to make the {this.props.routeCode}-{this.props.directionTitle} bus. It leaves in {this.state.nextDepartureIn} minutes and you are {this.props.duration} minutes away.</Text>
+        <Text style={{width: 200, textAlign: 'center', marginTop: 40}}>You have {this.state.nextDepartureIn - this.props.duration} minutes to make the {this.props.routeCode}-{this.props.directionTitle} bus. It leaves in {this.state.nextDepartureIn} minutes and you are {this.props.duration} minutes away.</Text>
       </View>
     );
   }
@@ -70,20 +73,18 @@ var StatusItem = React.createClass({
 var styles = StyleSheet.create({
   item: {
     flex: 1,
+    marginTop: 40,
+    marginLeft: 20,
+    marginRight: 20,
+    width: width - 40,
+    height: height * 0.8,
     alignItems: 'center',
-    backgroundColor: '#ced1d6',
-    marginTop: 30,
-    marginLeft: 30,
-    marginRight: 30,
-    width: 320,
-    height: 400,
-    borderRadius: 5
+    borderRadius: 5,
+    backgroundColor: '#ced1d6'
   },
   indicator: {
     width: 200,
-    height: 200,
-    marginTop: 50,
-    marginBottom: 50
+    height: 200
   }
 });
 
