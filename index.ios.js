@@ -9,6 +9,7 @@
 
 var React = require('react-native');
 var {
+  AsyncStorage,
   AppStateIOS,
   AppRegistry,
   StyleSheet,
@@ -16,6 +17,9 @@ var {
 } = React;
 
 var StatusList = require('./pages/StatusList');
+
+var LATITUDE_KEY = '@UserLocation:latitude';
+var LONGITUDE_KEY = '@UserLocation:longitude';
 
 var CommuterBot = React.createClass({
   getInitialState: function() {
@@ -30,28 +34,24 @@ var CommuterBot = React.createClass({
 
   componentDidMount: function() {
     AppStateIOS.addEventListener('change', this._handleAppStateChange);
-    // var that = this;
 
-    // var options = {
-    //   enableHighAccuracy: true,
-    //   timeout: 5000,
-    //   maximumAge: 0
-    // };
+    AsyncStorage.multiGet([LATITUDE_KEY, LONGITUDE_KEY])
+      .then((value) => {
+        if (value !== null && (value[0][1] !== null || value[1][1] !== null)){
+          var currentLocation = {
+            latitude: value[0][1],
+            longitude: value[1][1]
+          }
+          this.setState({currentLocation});
+          console.log('Recovered selection from disk: ' + value);
+        } else {
+          console.log('Initialized with no selection on disk.');
+        }
+      })
+      .catch((error) => console.log('AsyncStorage error: ' + error.message))
+      .done();
 
-    // function success(pos) {
-    //   var crd = pos.coords;
-
-    //   console.log('Your current position is:');
-    //   console.log('Latitude : ' + crd.latitude);
-    //   console.log('Longitude: ' + crd.longitude);
-    //   console.log('More or less ' + crd.accuracy + ' meters.');
-    // };
-
-    // function error(err) {
-    //   console.warn('ERROR(' + err.code + '): ' + err.message);
-    // };
-
-    // navigator.geolocation.getCurrentPosition(success, error, options);
+    this._refreshLocation();
   },
 
   componentWillUnmount: function() {
@@ -61,6 +61,30 @@ var CommuterBot = React.createClass({
   _handleAppStateChange: function(currentAppState) {
     this.setState({ currentAppState, });
     this.forceUpdate();
+  },
+
+  _refreshLocation: function() {
+    var options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    };
+
+    function success(pos) {
+      var crd = pos.coords;
+      var value = [[LATITUDE_KEY, crd.latitude.toString()], [LONGITUDE_KEY, crd.longitude.toString()]];
+
+      AsyncStorage.multiSet(value)
+        .then(() => console.log('Saved selection to disk: ' + value))
+        .catch((error) => console.log('AsyncStorage error: ' + error.message))
+        .done();
+    };
+
+    function error(err) {
+      console.warn('ERROR(' + err.code + '): ' + err.message);
+    };
+
+    navigator.geolocation.getCurrentPosition(success, error, options);
   },
 
   render: function() {

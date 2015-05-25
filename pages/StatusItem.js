@@ -68,7 +68,7 @@ var StatusItem = React.createClass({
         <Text style={[styles.content, styles.header]}>{this.props.title}</Text>
         <StatusCircle ref="status" style={[styles.content, styles.indicator]} />
         <Text style={[styles.content, styles.details]}>You have <Text style={{fontWeight: 'bold'}}>{timeLeft} {pluralize('minute', timeLeft)}</Text> to make the <Text style={{fontWeight: 'bold'}}>{this.props.routeCode}-{this.props.directionTitle}</Text> bus.</Text>
-        <Text style={[styles.content, styles.subDetails]}>Departure in {this.state.nextDepartureIn} {pluralize('minute', this.state.nextDepartureIn)} and you are {this.props.duration} {pluralize('minute', this.props.duration)} minutes away.</Text>
+        <Text style={[styles.content, styles.subDetails]}>Departure in {this.state.nextDepartureIn} {pluralize('minute', this.state.nextDepartureIn)} and you are {this.props.duration} {pluralize('minute', this.props.duration)} away.</Text>
       </View>
     );
   }
