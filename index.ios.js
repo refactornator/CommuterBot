@@ -9,12 +9,17 @@
 
 var React = require('react-native');
 var {
+  ActivityIndicatorIOS,
   AsyncStorage,
   AppStateIOS,
   AppRegistry,
   StyleSheet,
   View,
 } = React;
+var Dimensions = require('Dimensions');
+
+var width = Dimensions.get('window').width;
+var height = Dimensions.get('window').height;
 
 var StatusList = require('./pages/StatusList');
 
@@ -26,8 +31,8 @@ var CommuterBot = React.createClass({
     return {
       currentAppState: AppStateIOS.currentState,
       currentLocation: {
-        latitude: '37.7847900',
-        longitude: '-122.4719830'
+        latitude: '',
+        longitude: ''
       }
     };
   },
@@ -47,11 +52,10 @@ var CommuterBot = React.createClass({
         } else {
           console.log('Initialized with no selection on disk.');
         }
+        this._refreshLocation();
       })
       .catch((error) => console.log('AsyncStorage error: ' + error.message))
       .done();
-
-    this._refreshLocation();
   },
 
   componentWillUnmount: function() {
@@ -60,10 +64,11 @@ var CommuterBot = React.createClass({
 
   _handleAppStateChange: function(currentAppState) {
     this.setState({ currentAppState, });
-    this.forceUpdate();
   },
 
   _refreshLocation: function() {
+    var that = this;
+
     var options = {
       enableHighAccuracy: true,
       timeout: 5000,
@@ -72,6 +77,16 @@ var CommuterBot = React.createClass({
 
     function success(pos) {
       var crd = pos.coords;
+
+      var latitude = crd.latitude.toString();
+      var longitude = crd.longitude.toString();
+      var currentLocation = {
+        latitude,
+        longitude
+      };
+
+      that.setState({currentLocation});
+
       var value = [[LATITUDE_KEY, crd.latitude.toString()], [LONGITUDE_KEY, crd.longitude.toString()]];
 
       AsyncStorage.multiSet(value)
@@ -82,6 +97,7 @@ var CommuterBot = React.createClass({
 
     function error(err) {
       console.warn('ERROR(' + err.code + '): ' + err.message);
+      that._refreshLocation();
     };
 
     navigator.geolocation.getCurrentPosition(success, error, options);
@@ -114,9 +130,20 @@ var CommuterBot = React.createClass({
       }
     }];
 
+    var content;
+    if (this.state.currentLocation.latitude.length > 0 &&
+      this.state.currentLocation.longitude.length > 0) {
+      content = <StatusList data={data} currentLocation={this.state.currentLocation} />;
+    } else {
+      content = <ActivityIndicatorIOS
+        animating={true}
+        style={{height: height}}
+        size="large"/>;
+    }
+
     return (
       <View style={styles.container}>
-        <StatusList data={data} currentLocation={this.state.currentLocation} />
+        {content}
       </View>
     );
   }
