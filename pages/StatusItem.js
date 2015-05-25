@@ -97,8 +97,7 @@ var StatusItem = React.createClass({
       <View style={styles.wrapper}>
         <Text style={[styles.content, styles.header]}>{this.props.title}</Text>
         <StatusCircle ref="status" style={[styles.content, styles.indicator]} />
-        <Text style={[styles.content, styles.details]}>You have <Text style={{fontWeight: 'bold'}}>{timeLeft} {pluralize('minute', timeLeft)}</Text> to make the <Text style={{fontWeight: 'bold'}}>{this.props.routeCode}-{this.props.directionTitle}</Text> bus.</Text>
-        <Text style={[styles.content, styles.subDetails]}>Departure in {this.state.nextDepartureIn} {pluralize('minute', this.state.nextDepartureIn)} and you are {this.props.duration} {pluralize('minute', this.props.duration)} away.</Text>
+        <Text style={[styles.content, styles.details]}>You{"'"}ve got <Text style={{fontWeight: 'bold'}}>{timeLeft} {pluralize('minute', timeLeft)}</Text> before the <Text style={{fontWeight: 'bold'}}>{this.props.routeCode}-{this.props.directionTitle}</Text> leaves.</Text>
       </View>
     );
   }
@@ -112,18 +111,13 @@ var styles = StyleSheet.create({
   header: {
     marginTop: 10,
     marginBottom: 30,
-    fontWeight: 'bold',
-    fontSize: 14
+    fontSize: 20
   },
   indicator: {
     height: 200
   },
   details: {
     marginTop: 40
-  },
-  subDetails: {
-    fontSize: 10,
-    marginTop: 10
   },
   wrapper: {
     flex: 1,
