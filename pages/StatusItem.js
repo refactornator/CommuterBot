@@ -9,6 +9,7 @@ var {
 } = React;
 
 var xml2js = require('xml2js');
+var pluralize = require('pluralize');
 var Dimensions = require('Dimensions');
 
 var width = Dimensions.get('window').width;
@@ -60,18 +61,41 @@ var StatusItem = React.createClass({
   },
 
   render: function() {
+    var timeLeft = this.state.nextDepartureIn - this.props.duration;
+
     return (
-      <View style={styles.item}>
-        <Text style={{marginTop: 10, marginBottom: 30}}>{this.props.title}</Text>
-        <StatusCircle ref="status" style={styles.indicator} />
-        <Text style={{width: 200, textAlign: 'center', marginTop: 40}}>You have {this.state.nextDepartureIn - this.props.duration} minutes to make the {this.props.routeCode}-{this.props.directionTitle} bus. It leaves in {this.state.nextDepartureIn} minutes and you are {this.props.duration} minutes away.</Text>
+      <View style={styles.wrapper}>
+        <Text style={[styles.content, styles.header]}>{this.props.title}</Text>
+        <StatusCircle ref="status" style={[styles.content, styles.indicator]} />
+        <Text style={[styles.content, styles.details]}>You have <Text style={{fontWeight: 'bold'}}>{timeLeft} {pluralize('minute', timeLeft)}</Text> to make the <Text style={{fontWeight: 'bold'}}>{this.props.routeCode}-{this.props.directionTitle}</Text> bus.</Text>
+        <Text style={[styles.content, styles.subDetails]}>Departure in {this.state.nextDepartureIn} {pluralize('minute', this.state.nextDepartureIn)} and you are {this.props.duration} {pluralize('minute', this.props.duration)} minutes away.</Text>
       </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
-  item: {
+  content: {
+    width: 200,
+    textAlign: 'center'
+  },
+  header: {
+    marginTop: 10,
+    marginBottom: 30,
+    fontWeight: 'bold',
+    fontSize: 14
+  },
+  indicator: {
+    height: 200
+  },
+  details: {
+    marginTop: 40
+  },
+  subDetails: {
+    fontSize: 10,
+    marginTop: 10
+  },
+  wrapper: {
     flex: 1,
     marginTop: 40,
     marginLeft: 20,
@@ -81,10 +105,6 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     backgroundColor: '#ced1d6'
-  },
-  indicator: {
-    width: 200,
-    height: 200
   }
 });
 
