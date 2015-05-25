@@ -7,7 +7,8 @@ function getNextDepartureTime(xml) {
       if (xml.body.predictions[0].hasOwnProperty('direction') && xml.body.predictions[0].direction.length > 0) {
         if (xml.body.predictions[0].direction[0].hasOwnProperty('prediction') && xml.body.predictions[0].direction[0].prediction.length > 0) {
           if (xml.body.predictions[0].direction[0].prediction[0].$.hasOwnProperty('minutes')) {
-            minutes = parseInt(xml.body.predictions[0].direction[0].prediction[0].$.minutes, 10);
+            var prediction = xml.body.predictions[0].direction[0].prediction.shift();
+            minutes = parseInt(prediction.$.minutes, 10);
           }
         }
       }

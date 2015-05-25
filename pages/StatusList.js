@@ -7,24 +7,34 @@ var {
   ScrollView,
 } = React;
 
+var haversine = require('haversine-distance');
+
 var StatusItem = require('./StatusItem');
 
 var StatusList = React.createClass({
   render: function() {
-    var currentLocation = this.props.currentLocation;
     var statusNodes = this.props.data.map(function (status) {
+      var distanceInMeters = haversine(this.props.currentLocation, status.location);
+      var durationInMinutes =  Math.ceil(distanceInMeters / 1.4 / 60);
+
       return (
         <StatusItem 
           key={status.id}
-          name={status.name}
+          title={status.title}
           agency={status.agency}
+          directionTitle={status.directionTitle}
           routeCode={status.routeCode}
           stopCode={status.stopCode}
           location={status.location}
-          currentLocation={currentLocation}>
+          duration={durationInMinutes}>
         </StatusItem>
       );
+    }.bind(this)).filter(function(statusItem) {
+      if (statusItem.props.duration <= 30) {
+        return true;
+      }
     });
+
     return (
       <ScrollView
         horizontal={true}

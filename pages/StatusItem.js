@@ -9,7 +9,6 @@ var {
 } = React;
 
 var xml2js = require('xml2js');
-var haversine = require('haversine-distance')
 
 var StatusCircle = require('../components/StatusCircle');
 var StatusService = require('../components/StatusService');
@@ -34,14 +33,23 @@ var StatusItem = React.createClass({
       .then(function(response) {
         xml2js.parseString(response._bodyInit, function (err, result) {
           var minutes = ServiceParser.getNextDepartureTime(result);
-          that.setState({nextDepartureIn: minutes});
-          console.log('next departure in:', minutes, 'minutes.');
+          var timeLeft = minutes - that.props.duration;
+          while(minutes !== null && timeLeft < 0) {
+            minutes = ServiceParser.getNextDepartureTime(result);
+            timeLeft = minutes - that.props.duration;
+          }
 
-          if (minutes <= 5) {
+          if(!minutes && timeLeft < 0) {
+            return;
+          }
+
+          that.setState({nextDepartureIn: minutes});
+
+          if (timeLeft <= 5) {
             that.refs.status.changeColor('#379F55');
-          } else if (minutes > 5 && minutes <= 10) {
+          } else if (timeLeft > 5 && timeLeft <= 10) {
             that.refs.status.changeColor('#ffb83f');
-          } else if (minutes > 10) {
+          } else if (timeLeft > 10) {
             that.refs.status.changeColor('#ec5252');
           }
         });
@@ -49,15 +57,11 @@ var StatusItem = React.createClass({
   },
 
   render: function() {
-    var distanceInMeters = haversine(this.props.currentLocation, this.props.location);
-    console.log(distanceInMeters);
-    var duration =  Math.ceil(distanceInMeters / 1.4 / 60);
-
     return (
       <View style={styles.item}>
-        <Text style={{marginBottom: 50}}>{this.props.name}</Text>
+        <Text style={{marginTop: 10, marginBottom: 30}}>{this.props.title}</Text>
         <StatusCircle ref="status" style={styles.indicator} />
-        <Text style={{width: 200, textAlign: 'center', marginTop: 50}}>You are {duration} minutes from the bus stop, and the bus leaves in {this.state.nextDepartureIn} minutes.</Text>
+        <Text style={{width: 200, textAlign: 'center', marginTop: 50}}>You have {this.state.nextDepartureIn - this.props.duration} minutes to make the {this.props.routeCode}-{this.props.directionTitle} bus. It leaves in {this.state.nextDepartureIn} minutes and you are {this.props.duration} minutes away.</Text>
       </View>
     );
   }

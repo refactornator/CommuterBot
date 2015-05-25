@@ -64,11 +64,11 @@ var CommuterBot = React.createClass({
   },
 
   render: function() {
-    console.log('rendering');
-    
     var data = [{
       id: 1,
-      name: 'The 1 Bus to Work',
+      title: 'California St & 12th Ave',
+      directionTitle: 'Inbound to Downtown',
+      shortDirectionTitle: 'Inbound',
       agency: 'sf-muni',
       routeCode: '1',
       stopCode: '3832',
@@ -78,7 +78,9 @@ var CommuterBot = React.createClass({
       }
     }, {
       id: 2,
-      name: 'The 2 Bus Home',
+      title: 'Sutter St & Mason St',
+      directionTitle: 'Outbound to the Richmond District',
+      shortDirectionTitle: 'Outbound',
       agency: 'sf-muni',
       routeCode: '2',
       stopCode: '6601',
