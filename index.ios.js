@@ -148,6 +148,18 @@ var CommuterBot = React.createClass({
         latitude: '37.78906',
         longitude: '-122.4103199'
       }
+    }, {
+      id: 3,
+      title: 'Clement St & 12th Ave',
+      directionTitle: 'Inbound to Downtown',
+      shortDirectionTitle: 'Inbound',
+      agency: 'sf-muni',
+      routeCode: '2',
+      stopCode: '4048',
+      location: {
+        latitude: '37.7825799',
+        longitude: '-122.47097'
+      }
     }];
 
     var content;
