@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var {
+  TouchableOpacity,
   AppStateIOS,
   AppRegistry,
   StyleSheet,
@@ -95,8 +96,12 @@ var StatusItem = React.createClass({
 
     return (
       <View style={styles.wrapper}>
-        <Text style={[styles.content, styles.header]}>{this.props.title}</Text>
+        <TouchableOpacity onPress={this.props.onClick}>
+          <Text style={[styles.content, styles.header]}>{this.props.title}</Text>
+        </TouchableOpacity>
+        
         <StatusCircle ref="status" style={[styles.content, styles.indicator]} />
+
         <Text style={[styles.content, styles.details]}>You{"'"}ve got <Text style={{fontWeight: 'bold'}}>{timeLeft} {pluralize('minute', timeLeft)}</Text> before the <Text style={{fontWeight: 'bold'}}>{this.props.routeCode}-{this.props.directionTitle}</Text> arrives.</Text>
       </View>
     );
